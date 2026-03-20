@@ -66,8 +66,8 @@ export function HeroCarousel() {
           ))}
         </CarouselContent>
         <div className="hidden md:block">
-          <CarouselPrevious className="left-8 w-14 h-14 rounded-none bg-background/20 hover:bg-primary border-border text-white hover:text-primary-foreground backdrop-blur-sm transition-colors" />
-          <CarouselNext className="right-8 w-14 h-14 rounded-none bg-background/20 hover:bg-primary border-border text-white hover:text-primary-foreground backdrop-blur-sm transition-colors" />
+          <CarouselPrevious className="left-8 w-16 h-16 rounded-none bg-background/40 hover:bg-primary border-border text-white hover:text-primary-foreground backdrop-blur-md transition-all z-50 pointer-events-auto" />
+          <CarouselNext className="right-8 w-16 h-16 rounded-none bg-background/40 hover:bg-primary border-border text-white hover:text-primary-foreground backdrop-blur-md transition-all z-50 pointer-events-auto" />
         </div>
       </Carousel>
     </div>
