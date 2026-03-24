@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 import { ShopProvider } from "@/context/shop-context";
 import { AuthProvider } from "@/context/auth-context";
 import { LoginTransition } from "@/components/animations/login-transition";
+import { HistoryProvider } from "@/components/history/HistoryProvider";
 
 export default function RootLayout({
   children,
@@ -40,8 +41,10 @@ export default function RootLayout({
       >
         <ShopProvider>
           <AuthProvider>
-            <LoginTransition />
-            {children}
+            <HistoryProvider>
+              <LoginTransition />
+              {children}
+            </HistoryProvider>
           </AuthProvider>
         </ShopProvider>
       </body>

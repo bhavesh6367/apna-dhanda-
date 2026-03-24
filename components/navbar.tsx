@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Heart, ShoppingBag, User, Menu } from "lucide-react";
+import { Search, Heart, ShoppingBag, User, Menu, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState, useEffect } from "react";
@@ -8,11 +8,14 @@ import { useShop } from "@/context/shop-context";
 import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
+import HomeIcon from "@/components/navbar/HomeIcon";
 
 export function Navbar() {
   const { 
     cart, 
-    wishlist, 
+    wishlist,
+    currentScreen,
+    activeCategory,
     setCurrentScreen, 
     setCartOpen, 
     setActiveCategory 
@@ -49,42 +52,72 @@ export function Navbar() {
               <nav className="flex flex-col gap-6 mt-12 font-space uppercase tracking-widest text-lg">
                 <button
                   onClick={() => {
+                    setCurrentScreen("home");
+                    router.push("/");
+                  }}
+                  className={clsx(
+                    "text-left flex items-center gap-3 transition-colors",
+                    currentScreen === "home" ? "text-[#E8FF00]" : "hover:text-[#E8FF00]"
+                  )}
+                >
+                  <Home size={18} />
+                  HOME
+                </button>
+                <button
+                  onClick={() => {
                     setActiveCategory("t-shirts");
                     setCurrentScreen("category");
                   }}
-                  className="text-left hover:text-primary transition-colors"
+                  className={clsx(
+                    "text-left transition-colors",
+                    currentScreen === "category" && activeCategory === "t-shirts" ? "text-[#E8FF00]" : "hover:text-[#E8FF00]"
+                  )}
                 >
-                  T-Shirts
+                  MEN
                 </button>
                 <button
                   onClick={() => {
                     setActiveCategory("vests");
                     setCurrentScreen("category");
                   }}
-                  className="text-left hover:text-primary transition-colors"
+                  className={clsx(
+                    "text-left transition-colors",
+                    currentScreen === "category" && activeCategory === "vests" ? "text-[#E8FF00]" : "hover:text-[#E8FF00]"
+                  )}
                 >
-                  Vests
+                  WOMEN
                 </button>
                 <button
                   onClick={() => {
                     setActiveCategory(null);
                     setCurrentScreen("category");
                   }}
-                  className="text-left hover:text-primary transition-colors text-primary"
+                  className={clsx(
+                    "text-left transition-colors",
+                    currentScreen === "category" && activeCategory === null ? "text-[#E8FF00]" : "hover:text-[#E8FF00]"
+                  )}
                 >
-                  New Drops
+                  NEW DROPS
                 </button>
               </nav>
             </SheetContent>
           </Sheet>
 
           <button
-            onClick={() => setCurrentScreen("home")}
+            onClick={() => {
+              setCurrentScreen("home");
+              router.push("/");
+            }}
             className="text-2xl md:text-3xl font-bebas tracking-[0.2em] flex items-center gap-2 group"
           >
             <span className="bg-primary text-primary-foreground px-2 py-0.5 group-hover:bg-white group-hover:text-black transition-colors">OFF</span>
             <span>GRIDS</span>
           </button>
+          
+          <div className="hidden md:flex items-center gap-4">
+            <div className="w-px h-5 bg-[#2A2A2A]" />
+            <HomeIcon />
+          </div>
         </div>
 
         {/* Center: Desktop Nav */}
@@ -94,27 +127,51 @@ export function Navbar() {
               setActiveCategory("t-shirts");
               setCurrentScreen("category");
             }}
-            className="hover:text-primary transition-colors underline-offset-8 hover:underline"
+            className={clsx(
+              "relative transition-colors duration-200 py-1",
+              currentScreen === "category" && activeCategory === "t-shirts"
+                ? "text-[#E8FF00]"
+                : "text-[#F5F0E8] hover:text-[#E8FF00]"
+            )}
           >
             MEN
+            {currentScreen === "category" && activeCategory === "t-shirts" && (
+              <span className="absolute -bottom-1 left-0 right-0 h-[2px] bg-[#E8FF00] rounded-full" />
+            )}
           </button>
           <button
             onClick={() => {
               setActiveCategory("vests");
               setCurrentScreen("category");
             }}
-            className="hover:text-primary transition-colors underline-offset-8 hover:underline"
+            className={clsx(
+              "relative transition-colors duration-200 py-1",
+              currentScreen === "category" && activeCategory === "vests"
+                ? "text-[#E8FF00]"
+                : "text-[#F5F0E8] hover:text-[#E8FF00]"
+            )}
           >
             WOMEN
+            {currentScreen === "category" && activeCategory === "vests" && (
+              <span className="absolute -bottom-1 left-0 right-0 h-[2px] bg-[#E8FF00] rounded-full" />
+            )}
           </button>
           <button
             onClick={() => {
               setActiveCategory(null);
               setCurrentScreen("category");
             }}
-            className="text-primary hover:opacity-80 transition-opacity"
+            className={clsx(
+              "relative transition-colors duration-200 py-1",
+              currentScreen === "category" && activeCategory === null
+                ? "text-[#E8FF00]"
+                : "text-[#F5F0E8] hover:text-[#E8FF00]"
+            )}
           >
             NEW DROPS
+            {currentScreen === "category" && activeCategory === null && (
+              <span className="absolute -bottom-1 left-0 right-0 h-[2px] bg-[#E8FF00] rounded-full" />
+            )}
           </button>
         </nav>
 
