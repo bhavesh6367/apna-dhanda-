@@ -6,10 +6,8 @@ import { Button } from "@/components/ui/button";
 import { 
   Heart, 
   ShoppingBag, 
-  ChevronLeft, 
   ChevronRight, 
   Star, 
-  Check, 
   ShieldCheck, 
   Truck, 
   RotateCcw,
@@ -25,6 +23,24 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ProductCard } from "@/components/product-card";
+import { motion } from "framer-motion";
+
+const pageVariants = {
+  initial: { opacity: 0, y: 24 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: [0.25, 0.46, 0.45, 0.94] as any, // ease-out-quart
+    }
+  },
+  exit: {
+    opacity: 0,
+    y: -12,
+    transition: { duration: 0.2, ease: 'easeIn' as any }
+  }
+};
 
 export function ProductView() {
   const { activeProductId, setCurrentScreen, toggleWishlist, isInWishlist, addToCart } = useShop();
@@ -62,7 +78,13 @@ export function ProductView() {
   const relatedProducts = PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   return (
-    <div className="bg-background min-h-screen">
+    <motion.div 
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="bg-background min-h-screen"
+    >
       {/* Breadcrumbs */}
       <div className="container mx-auto px-4 md:px-6 py-6 flex items-center gap-2 text-[10px] font-space tracking-widest uppercase text-muted-foreground overflow-hidden whitespace-nowrap">
         <button onClick={() => setCurrentScreen("home")} className="hover:text-primary transition-colors">HOME</button>
@@ -96,7 +118,7 @@ export function ProductView() {
                 src={mainImage} 
                 alt={product.name} 
                 fill 
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 priority
               />
               <div className="absolute top-4 left-4 flex flex-col gap-2">
@@ -263,17 +285,29 @@ export function ProductView() {
           </div>
         </div>
 
-        {/* Similar Products */}
         <section className="mt-24 space-y-10">
           <div className="border-l-4 border-primary pl-6">
             <h2 className="font-bebas text-4xl md:text-5xl tracking-widest uppercase">YOU MAY ALSO LIKE</h2>
             <p className="font-space text-muted-foreground text-[10px] tracking-[0.3em] mt-2 uppercase">COMPLETE THE GRID VIBE.</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ staggerChildren: 0.05 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+          >
             {relatedProducts.map(p => (
-              <ProductCard key={p.id} product={p} />
+              <motion.div 
+                key={p.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
+                <ProductCard product={p} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
       </div>
 
@@ -286,6 +320,6 @@ export function ProductView() {
           {selectedSize ? `ADD ${selectedSize} TO CART` : "CHOOSE SIZE"}
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }

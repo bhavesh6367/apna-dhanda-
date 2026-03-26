@@ -4,8 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 import { useShop } from "@/context/shop-context";
-
-import { Badge } from "@/components/ui/badge";
+import { GlowCard } from "@/components/ui/spotlight-card";
 
 interface ProductCardProps {
   product: {
@@ -25,6 +24,7 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { setCurrentScreen, setActiveProductId, toggleWishlist, isInWishlist } = useShop();
   const [isHovered, setIsHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const isProductInWishlist = isInWishlist(product.id);
 
   const handleProductClick = () => {
@@ -33,21 +33,29 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div 
-      className="group flex flex-col gap-4 relative border border-border bg-card transition-all hover:border-primary p-2"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <GlowCard
+      customSize={true}
+      glowColor="green"
+      onClick={handleProductClick}
+      className="group w-full cursor-pointer transition-transform duration-300 hover:-translate-y-1 p-2"
     >
       {/* Product Image Container */}
       <div 
-        onClick={handleProductClick}
-        className="relative aspect-[3/4] overflow-hidden bg-muted w-full border border-border cursor-pointer"
+        className="relative aspect-[3/4] overflow-hidden bg-[#1A1A1A] w-full border border-border"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
+        {/* Skeleton Loader */}
+        {!imageLoaded && (
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1A1A1A] via-[#252525] to-[#1A1A1A] animate-pulse z-10" />
+        )}
+        
         <Image
           src={(isHovered && product.images[1]) ? product.images[1] : product.images[0]}
           alt={product.name}
           fill
-          className="object-cover transition-all duration-1000 group-hover:scale-105 filter group-hover:brightness-110"
+          onLoad={() => setImageLoaded(true)}
+          className={`object-cover transition-all duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'} group-hover:scale-105 filter group-hover:brightness-110`}
           sizes="(max-width: 768px) 100vw, 33vw"
         />
         
@@ -58,7 +66,7 @@ export function ProductCard({ product }: ProductCardProps) {
             e.stopPropagation();
             toggleWishlist(product);
           }}
-          className="absolute top-3 right-3 p-2 bg-background border border-border hover:border-primary transition-all z-10"
+          className="absolute top-3 right-3 p-2 bg-background border border-border hover:border-primary transition-all z-20"
           aria-label="Add to wishlist"
         >
           <Heart 
@@ -67,16 +75,16 @@ export function ProductCard({ product }: ProductCardProps) {
         </button>
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+        <div className="absolute top-3 left-3 flex flex-col gap-2 z-20">
           {product.badges.map((badge, idx) => (
-            <div key={idx} className="bg-primary text-primary-foreground font-space font-bold px-2 py-0.5 text-[10px] tracking-widest uppercase">
+            <div key={idx} className="bg-primary text-primary-foreground font-space font-bold px-2 py-0.5 text-[10px] tracking-widest uppercase shadow-brutal">
               {badge}
             </div>
           ))}
         </div>
 
         {/* Quick Add - Appears from bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
+        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-30">
           <button 
             onClick={(e) => {
               e.stopPropagation();
@@ -90,7 +98,7 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Product Details */}
-      <div className="flex flex-col gap-2 cursor-pointer" onClick={handleProductClick}>
+      <div className="flex flex-col gap-2 pt-4">
         <div className="flex justify-between items-start gap-2">
           <h4 className="text-xs font-space text-muted-foreground tracking-widest uppercase truncate">{product.name}</h4>
           <span className="font-bebas text-xl tracking-wider text-primary">₹{product.price}</span>
@@ -115,6 +123,6 @@ export function ProductCard({ product }: ProductCardProps) {
           <span className="text-[10px] font-space text-muted-foreground tracking-tighter uppercase">{product.fabric}</span>
         </div>
       </div>
-    </div>
+    </GlowCard>
   );
 }

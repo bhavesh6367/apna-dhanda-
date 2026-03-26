@@ -6,21 +6,44 @@ import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useMemo } from "react";
 import { Filter, X, ChevronDown } from "lucide-react";
+import { Pagination } from "@/components/products/pagination";
+import { motion } from "framer-motion";
 
 const SIZES = ["S", "M", "L", "XL", "XXL"];
 const FITS = ["Oversized", "Regular", "Slim", "Korean Fit"];
 const COLORS = ["Black", "White", "Grey", "Beige", "Olive", "Navy"];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06,
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: 'easeOut' as any }
+  }
+};
+
 export function CategoryView() {
   const { activeCategory, filters, setFilters } = useShop();
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8;
 
   // Simulate loading
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(timer);
-  }, [activeCategory, filters]);
+  }, [activeCategory, filters, currentPage]);
 
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((product) => {
@@ -47,6 +70,13 @@ export function CategoryView() {
     });
   }, [activeCategory, filters]);
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const currentProducts = filteredProducts.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage
+  );
+
   const toggleFilter = (type: "sizes" | "fits" | "colors", value: string) => {
     setFilters((prev: any) => ({
       ...prev,
@@ -54,6 +84,7 @@ export function CategoryView() {
         ? prev[type].filter((v: string) => v !== value)
         : [...prev[type], value]
     }));
+    setCurrentPage(1); // Reset to first page on filter change
   };
 
   const clearAll = () => {
@@ -64,6 +95,7 @@ export function CategoryView() {
       colors: [],
       sort: "newest"
     });
+    setCurrentPage(1);
   };
 
   return (
@@ -143,7 +175,7 @@ export function CategoryView() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 space-y-6">
+        <main id="product-grid-top" className="flex-1 space-y-6 scroll-mt-24">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="font-bebas text-4xl md:text-6xl tracking-widest uppercase leading-none">
@@ -174,7 +206,7 @@ export function CategoryView() {
           </div>
 
           {/* Active Filter Chips */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 min-h-6">
             {[...filters.sizes, ...filters.fits, ...filters.colors].map(f => (
               <button 
                 key={f}
@@ -193,7 +225,7 @@ export function CategoryView() {
           {/* Grid */}
           {isLoading ? (
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-              {[...Array(8)].map((_, i) => (
+              {[...Array(productsPerPage)].map((_, i) => (
                 <div key={i} className="aspect-[3/4] bg-muted animate-pulse border border-border" />
               ))}
             </div>
@@ -203,11 +235,26 @@ export function CategoryView() {
               <Button onClick={clearAll} variant="link" className="text-primary font-space tracking-widest text-xs uppercase">Reset All Filters</Button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            <>
+              <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
+              >
+                {currentProducts.map((product) => (
+                  <motion.div key={product.id} variants={cardVariants}>
+                    <ProductCard product={product} />
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              <Pagination 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </>
           )}
         </main>
       </div>

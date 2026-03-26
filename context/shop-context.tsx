@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { PRODUCTS } from "@/lib/dummy-data";
 
-export type Screen = "home" | "category" | "product" | "wishlist";
+export type Screen = "home" | "category" | "product" | "wishlist" | "checkout" | "orderSuccess";
 
 interface CartItem {
   id: string;
@@ -55,6 +55,12 @@ interface ShopContextType {
   };
   setFilters: React.Dispatch<React.SetStateAction<any>>;
 
+  // Checkout
+  checkoutTransitioning: boolean;
+  setCheckoutTransitioning: (v: boolean) => void;
+  lastOrderId: string | null;
+  setLastOrderId: (id: string | null) => void;
+
   // Notifications
   notifications: any[];
   addNotification: (message: string, type: "success" | "error" | "info", undoAction?: () => void) => void;
@@ -78,6 +84,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     colors: [] as string[],
     sort: "newest"
   });
+
+  const [checkoutTransitioning, setCheckoutTransitioning] = useState(false);
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
 
   const [notifications, setNotifications] = useState<any[]>([]);
 
@@ -182,6 +191,10 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
         setActiveCategory,
         filters,
         setFilters,
+        checkoutTransitioning,
+        setCheckoutTransitioning,
+        lastOrderId,
+        setLastOrderId,
         notifications,
         addNotification,
         removeNotification
