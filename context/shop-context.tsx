@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { PRODUCTS } from "@/lib/dummy-data";
 
 export type Screen = "home" | "category" | "product" | "wishlist" | "checkout" | "orderSuccess";
@@ -90,14 +90,14 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
 
   const [notifications, setNotifications] = useState<any[]>([]);
 
-  const addNotification = (message: string, type: "success" | "error" | "info" = "success", undoAction?: () => void) => {
+  const addNotification = useCallback((message: string, type: "success" | "error" | "info" = "success", undoAction?: () => void) => {
     const id = Math.random().toString(36).substring(7);
     setNotifications((prev) => [...prev, { id, message, type, undoAction }]);
-  };
+  }, []);
 
-  const removeNotification = (id: string) => {
+  const removeNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
+  }, []);
 
   // Load from localStorage
   useEffect(() => {

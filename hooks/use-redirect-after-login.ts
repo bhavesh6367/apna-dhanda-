@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 
 export function useRedirectAfterLogin() {
   const router = useRouter();
 
-  const redirectAfterLogin = (role: string) => {
+  const redirectAfterLogin = useCallback((role: string) => {
     const intendedPath = sessionStorage.getItem("redirectAfterLogin");
     
     if (intendedPath) {
@@ -17,9 +18,9 @@ export function useRedirectAfterLogin() {
     if (role === "admin") {
       router.push("/admin");
     } else {
-      router.push("/dashboard");
+      router.push("/");
     }
-  };
+  }, [router]);
 
   return { redirectAfterLogin };
 }

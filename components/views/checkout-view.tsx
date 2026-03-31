@@ -188,20 +188,14 @@ export function CheckoutView() {
     }
 
     setIsSubmitting(true);
-    setCheckoutTransitioning(true);
       
-    // Wait for transition to fully cover, then switch screen
+    // Wait for fake validation/network delay, then switch screen directly
     setTimeout(() => {
       const orderId = `OG-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
       setLastOrderId(orderId);
       setCurrentScreen("orderSuccess");
       setIsSubmitting(false);
-      
-      // Keep transition visible as green for 1.5s more on the success screen
-      setTimeout(() => {
-        setCheckoutTransitioning(false);
-      }, 1500);
-    }, 2000);
+    }, 1000);
     return null;
   };
 

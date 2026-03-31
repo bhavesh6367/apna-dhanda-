@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axiosInstance, { setAccessToken } from "@/lib/axiosInstance";
+// import axiosInstance, { setAccessToken } from "@/lib/axiosInstance";
 
 interface User {
   id: string;
@@ -33,6 +33,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Check for session on boot
   useEffect(() => {
     const checkSession = async () => {
+      // Mocked for Frontend Testing — Skip backend check
+      /*
       try {
         const { data } = await axiosInstance.post("/auth/refresh");
         setAccessToken(data.accessToken);
@@ -43,37 +45,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } finally {
         setIsLoading(false);
       }
+      */
+      setIsLoading(false);
     };
     checkSession();
   }, []);
 
   const login = async (credentials: any) => {
-    try {
-      const { data } = await axiosInstance.post("/auth/login", credentials);
-      setUser(data.user);
-      setAccessToken(data.accessToken);
-    } catch (err) {
-      throw err;
-    }
+    // Mocked for Frontend Testing — Always Succeed
+    console.log("Mock Login with:", credentials);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        setUser({
+          id: "mock-123",
+          name: "Guest REBEL",
+          email: credentials.email,
+          role: "user",
+          isEmailVerified: true
+        });
+        resolve();
+      }, 1000);
+    });
   };
 
   const register = async (formData: any) => {
-    try {
-      const { data } = await axiosInstance.post("/auth/register", formData);
-      setUser(data.user);
-      setAccessToken(data.accessToken);
-    } catch (err) {
-      throw err;
-    }
+    // Mocked for Frontend Testing — Always Succeed
+    console.log("Mock Registration with:", formData);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        setUser({
+          id: "mock-new-123",
+          name: formData.name,
+          email: formData.email,
+          role: "user",
+          isEmailVerified: true
+        });
+        resolve();
+      }, 1500);
+    });
   };
 
   const logout = async () => {
-    try {
-      await axiosInstance.post("/auth/logout");
-    } finally {
-      setUser(null);
-      setAccessToken(null);
-    }
+    // Mocked for Frontend Testing
+    setUser(null);
+    // setAccessToken(null);
   };
 
   const triggerTransition = (callback: () => void) => {

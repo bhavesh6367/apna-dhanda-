@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { useShop } from "@/context/shop-context";
 import { Check, Package, ShoppingBag, ArrowRight, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AnimatedAnimals from "@/components/animations/AnimatedAnimals";
 
 // Lightweight Confetti Component
 const Confetti = () => {
@@ -83,16 +82,11 @@ export function OrderSuccessView() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-20 bg-background relative overflow-hidden">
       <Confetti />
-      
-      {/* 🐾 ANIMALS — play for 3 seconds then fade out */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
-        <AnimatedAnimals autoStopAfter={3000} />
-      </div>
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ delay: 3.2, duration: 0.6, ease: "easeOut" }}
+        transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
         className="relative z-10 flex flex-col items-center text-center max-w-2xl px-4"
       >
         {/* Animated Checkmark Circle */}
@@ -100,7 +94,7 @@ export function OrderSuccessView() {
           initial={{ scale: 0, rotate: -45 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ 
-            delay: 3.4, 
+            delay: 0.4, 
             type: "spring", 
             stiffness: 260, 
             damping: 20 
@@ -113,7 +107,7 @@ export function OrderSuccessView() {
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3.6 }}
+          transition={{ delay: 0.6 }}
           className="font-bebas text-6xl md:text-8xl tracking-tighter text-foreground mb-4"
         >
           ORDER PLACED!
